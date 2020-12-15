@@ -1,15 +1,14 @@
 part of game;
 
 class Pong {
-  final _players = List.generate(2, (index) => Player(), growable: false);
-  int get playerLength => _players.length;
+  final player = Player();
+  final enemy = Player();
 
   void init() {
-    _players.forEach((player) {
-      player._score = 0;
-    });
+    player._score = 0;
+    enemy._score = 0;
 
-    _players[userIndex]._position = table.centerLeft;
-    _players[enemyIndex]._position = table.centerRight;
+    player._position = table.centerLeft + Offset(playerSize.width / 2, 0);
+    enemy._position = table.centerRight - Offset(playerSize.width / 2, 0);
   }
 }
