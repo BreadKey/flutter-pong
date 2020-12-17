@@ -7,9 +7,19 @@ class PongPainter extends CustomPainter {
   final Pong pong;
   final Orientation orientation;
 
-  PongPainter(this.pong, this.orientation);
+  PongPainter(this.pong, this.orientation) : super(repaint: pong);
   @override
   void paint(Canvas canvas, Size size) {
+    initCanvas(canvas, size);
+    drawCenterLine(canvas);
+
+    final playerPaint = Paint()..color = Colors.white;
+    drawPlayer(pong.player, canvas, playerPaint);
+    drawPlayer(pong.enemy, canvas, playerPaint);
+    drawBall(canvas);
+  }
+
+  void initCanvas(Canvas canvas, Size size) {
     if (orientation == Orientation.portrait) {
       canvas.rotate(-pi / 2);
       canvas.scale(size.height / table.width, size.width / table.height);
@@ -17,24 +27,6 @@ class PongPainter extends CustomPainter {
     } else {
       canvas.scale(size.width / table.width, size.height / table.height);
     }
-
-    final paint = Paint()..color = Colors.white;
-
-    drawCenterLine(canvas);
-
-    canvas.drawRect(
-        Rect.fromCenter(
-            center: pong.player.position,
-            width: playerSize.width,
-            height: playerSize.height),
-        paint);
-
-    canvas.drawRect(
-        Rect.fromCenter(
-            center: pong.enemy.position,
-            width: playerSize.width,
-            height: playerSize.height),
-        paint);
   }
 
   void drawCenterLine(Canvas canvas) {
@@ -67,6 +59,21 @@ class PongPainter extends CustomPainter {
     }
 
     canvas.drawPath(centerLinePath, centerLinePaint);
+  }
+
+  void drawPlayer(Player player, Canvas canvas, Paint paint) {
+    canvas.drawRect(
+        Rect.fromCenter(
+            center: player.position,
+            width: playerSize.width,
+            height: playerSize.height),
+        paint);
+  }
+
+  void drawBall(Canvas canvas) {
+    canvas.drawRect(
+        Rect.fromCircle(center: pong.ballPosition, radius: ballRadius),
+        Paint()..color = Colors.white);
   }
 
   @override
