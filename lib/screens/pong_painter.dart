@@ -18,11 +18,10 @@ class PongPainter extends CustomPainter {
       canvas.scale(size.width / table.width, size.height / table.height);
     }
 
-    final paint = Paint()
-      ..color = Colors.white
-      ..strokeWidth = playerSize.width;
+    final paint = Paint()..color = Colors.white;
 
-    canvas.drawLine(table.topCenter, table.bottomCenter, paint);
+    drawCenterLine(canvas);
+
     canvas.drawRect(
         Rect.fromCenter(
             center: pong.player.position,
@@ -36,6 +35,38 @@ class PongPainter extends CustomPainter {
             width: playerSize.width,
             height: playerSize.height),
         paint);
+  }
+
+  void drawCenterLine(Canvas canvas) {
+    const centerLineWidth = 5.0;
+    const dotCount = 25;
+
+    final centerLinePath = Path();
+    final centerLinePaint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = centerLineWidth
+      ..style = PaintingStyle.stroke;
+
+    final topCenter = table.topCenter;
+    final bottomCenter = table.bottomCenter;
+
+    double currentY = topCenter.dy;
+
+    centerLinePath.moveTo(topCenter.dx, topCenter.dy);
+    bool isLine = true;
+    final space = table.height / (dotCount * 2 - 1);
+
+    while (currentY < bottomCenter.dy) {
+      final nextY = currentY + space;
+      isLine
+          ? centerLinePath.lineTo(bottomCenter.dx, nextY)
+          : centerLinePath.moveTo(bottomCenter.dx, nextY);
+
+      currentY = nextY;
+      isLine = !isLine;
+    }
+
+    canvas.drawPath(centerLinePath, centerLinePaint);
   }
 
   @override
